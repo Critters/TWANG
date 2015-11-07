@@ -41,9 +41,9 @@ USE_GRAVITY: 0/1 to set if particles created by the player getting killed should
 ## Modifying / Creating levels
 Find the loadLevel() function, in there you can see a switch statment with the 10 levels I created. They all call different functions and variables to setup the level. Each one is described below:
 
-*playerPosition:* Where the player starts on the 0 to 1000 line. If not set it defaults to 0. I set it to 200 in the first level so the player can see movement even if the first action they take is to push the joystick left
+**playerPosition:** Where the player starts on the 0 to 1000 line. If not set it defaults to 0. I set it to 200 in the first level so the player can see movement even if the first action they take is to push the joystick left
 
-*spawnEnemy(position, direction, speed, wobble)*
+**spawnEnemy(position, direction, speed, wobble)**
 * position: 0 to 1000
 * direction: 0/1, initial direction of travel
 * speed: >=0, speed of the enemy, remember the game is 1000 wide and runs at 60fps. I recommend between 1 and 4
