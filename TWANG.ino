@@ -1,20 +1,19 @@
+// Required libs
 #include "FastLED.h"
 #include "I2Cdev.h"
 #include "MPU6050.h"
 #include "Wire.h"
 #include "toneAC.h"
+#include "iSin.h"
+#include "RunningMedian.h"
 
+// Included libs
 #include "Enemy.h"
 #include "Particle.h"
 #include "Spawner.h"
 #include "Lava.h"
 #include "Boss.h"
 #include "Conveyor.h"
-#include "iSin.h"
-
-#include "RunningMedian.h"
-RunningMedian MPUAngleSamples = RunningMedian(5);
-RunningMedian MPUWobbleSamples = RunningMedian(5);
 
 // MPU
 MPU6050 accelgyro;
@@ -28,7 +27,6 @@ int16_t gx, gy, gz;
 #define LED_COLOR_ORDER      BGR//GBR
 #define BRIGHTNESS           150
 #define DIRECTION            1     // 0 = right to left, 1 = left to right
-
 #define MIN_REDRAW_INTERVAL  16    // Min redraw interval (ms) 33 = 30fps / 16 = 63fps
 #define USE_GRAVITY          1     // 0/1 use gravity (LED strip going up wall)
 #define BEND_POINT           550   // 0/1000 point at which the LED strip goes up the wall
@@ -58,8 +56,7 @@ bool attacking = 0;                // Is the attack in progress?
 #define BOSS_WIDTH          40
 
 // PLAYER
-#define MAX_PLAYER_SPEED    10
-// Max move speed of the player
+#define MAX_PLAYER_SPEED    10     // Max move speed of the player
 char* stage;                       // what stage the game is at (PLAY/DEAD/WIN/GAMEOVER)
 long stageStartTime;               // Stores the time the stage changed for stages that are time based
 int playerPosition;                // Stores the player position
@@ -75,10 +72,7 @@ Enemy enemyPool[10] = {
 };
 int const enemyCount = 10;
 Particle particlePool[40] = {
-    Particle(), Particle(), Particle(), Particle(), Particle(), Particle(), Particle(), Particle(), Particle(), Particle(),
-    Particle(), Particle(), Particle(), Particle(), Particle(), Particle(), Particle(), Particle(), Particle(), Particle(),
-    Particle(), Particle(), Particle(), Particle(), Particle(), Particle(), Particle(), Particle(), Particle(), Particle(),
-    Particle(), Particle(), Particle(), Particle(), Particle(), Particle(), Particle(), Particle(), Particle(), Particle()
+    Particle(), Particle(), Particle(), Particle(), Particle(), Particle(), Particle(), Particle(), Particle(), Particle(), Particle(), Particle(), Particle(), Particle(), Particle(), Particle(), Particle(), Particle(), Particle(), Particle(), Particle(), Particle(), Particle(), Particle(), Particle(), Particle(), Particle(), Particle(), Particle(), Particle(), Particle(), Particle(), Particle(), Particle(), Particle(), Particle(), Particle(), Particle(), Particle(), Particle()
 };
 int const particleCount = 40;
 Spawner spawnPool[2] = {
@@ -96,7 +90,8 @@ int const conveyorCount = 2;
 Boss boss = Boss();
 
 CRGB leds[NUM_LEDS];
-CRGBPalette16 palAttack;
+RunningMedian MPUAngleSamples = RunningMedian(5);
+RunningMedian MPUWobbleSamples = RunningMedian(5);
 
 void setup() {
     Serial.begin(9600);
@@ -111,10 +106,12 @@ void setup() {
     FastLED.setBrightness(BRIGHTNESS);
     FastLED.setDither(1);
     
+    // Life LEDs
     for(int i = 0; i<3; i++){
         pinMode(lifeLEDs[i], OUTPUT);
         digitalWrite(lifeLEDs[i], HIGH);
     }
+    
     loadLevel();
 }
 
@@ -133,7 +130,6 @@ void loop() {
     }
     
     if (mm - previousMillis >= MIN_REDRAW_INTERVAL) {
-        //Serial.println((mm - previousMillis) - MIN_REDRAW_INTERVAL);
         getAccelerometerData();
         long frameTimer = mm;
         previousMillis = mm;
@@ -156,7 +152,6 @@ void loop() {
             // PLAYING
             if(attacking && attackMillis+ATTACK_DURATION < mm) attacking = 0;
             
-            //Serial.println("C");
             // If not attacking, check if they should be
             if(!attacking && joystickWobble > ATTACK_THRESHOLD){
                 attackMillis = mm;
@@ -177,7 +172,6 @@ void loop() {
                     return;
                 }
             }
-            
             
             if(inLava(playerPosition)){
                 die();
@@ -255,17 +249,13 @@ void loop() {
         FastLED.show();
         Serial.println(millis()-mm);
     }
-    
 }
-
-
 
 
 // ---------------------------------
 // ------------ LEVELS -------------
 // ---------------------------------
 void loadLevel(){
-    //levelNumber = 7;
     updateLives();
     cleanupLevel();
     playerPosition = 0;
@@ -396,7 +386,6 @@ void cleanupLevel(){
 }
 
 void levelComplete(){
-    Serial.println("levelComplete()");
     stageStartTime = millis();
     stage = "WIN";
     if(levelNumber == LEVEL_COUNT) stage = "COMPLETE";
@@ -434,7 +423,6 @@ void die(){
 // ----------------------------------
 // -------- TICKS & RENDERS ---------
 // ----------------------------------
-
 void tickEnemies(){
     for(int i = 0; i<enemyCount; i++){
         if(enemyPool[i].Alive()){
@@ -470,15 +458,6 @@ void tickBoss(){
     // DRAW
     if(boss.Alive()){
         boss._ticks ++;
-        //if(boss._ticks%5 == 0){
-        //    if(boss._pos > playerPosition){
-        //        boss._pos -= 1;
-        //    }else{
-        //        boss._pos += 1;
-        //    }
-        //    spawnPool[0]._pos = boss._pos;
-        //    spawnPool[1]._pos = boss._pos;
-        //}
         for(int i = getLED(boss._pos-BOSS_WIDTH/2); i<=getLED(boss._pos+BOSS_WIDTH/2); i++){
             leds[i] = CRGB::DarkRed;
             leds[i] %= 100;
@@ -504,14 +483,6 @@ void tickBoss(){
             }
         }
     }
-}
-
-void drawUnderlay(){
-    int playerLED = getLED(playerPosition);
-    int n;
-    for(int i = playerLED-5; i<=playerLED+5; i++){
-        leds[i] = CRGB(0, (5-abs(i - playerLED)), 0);
-    } 
 }
 
 void drawPlayer(){
@@ -566,7 +537,6 @@ void tickLava(){
         }
         lavaPool[i] = LP;
     }
-    
 }
 
 bool tickParticles(){
@@ -627,12 +597,13 @@ void drawAttack(){
     leds[getLED(playerPosition+(ATTACK_WIDTH/2))] = CRGB(n, n, 255);
 }
 
-// The world is 1000 pixels wide, this converts world units into an LED number
 int getLED(int pos){
+    // The world is 1000 pixels wide, this converts world units into an LED number
     return constrain((int)map(pos, 0, 1000, 0, NUM_LEDS-1), 0, NUM_LEDS-1);
 }
 
 bool inLava(int pos){
+    // Returns if the player is in active lava
     int i;
     Lava LP;
     for(i = 0; i<lavaCount; i++){
@@ -645,6 +616,7 @@ bool inLava(int pos){
 }
 
 void updateLives(){
+    // Updates the life LEDs to show how many lives the player has left
     for(int i = 0; i<3; i++){
        digitalWrite(lifeLEDs[i], lives>i?HIGH:LOW);
     }
@@ -654,7 +626,6 @@ void updateLives(){
 // ---------------------------------
 // --------- SCREENSAVER -----------
 // ---------------------------------
-
 void screenSaverTick(){
     int n, b, c, i;
     long mm = millis();
@@ -702,15 +673,12 @@ void getAccelerometerData(){
         joystickTilt = 0-joystickTilt;
     }
     joystickWobble = abs(MPUWobbleSamples.getHighest());
-    
-    //Serial.print(joystickTilt); Serial.print(" : "); Serial.println(joystickWobble);
 }
 
 
 // ---------------------------------
 // -------------- SFX --------------
 // ---------------------------------
-
 void SFXtilt(int amount){ 
     int f = map(abs(amount), 0, 90, 80, 900)+random8(100);
     if(playerPositionModifier < 0) f -= 500;
@@ -723,8 +691,6 @@ void SFXattacking(){
     if(random8(5)== 0){
       freq *= 3;
     }
-    //freq -= map((millis() - attackMillis), 0, ATTACK_DURATION, 100, 0);
-    
     toneAC(freq, MAX_VOLUME);
 }
 void SFXdead(){
