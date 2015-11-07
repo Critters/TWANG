@@ -17,9 +17,10 @@ A playlist that shows the development of TWANG and the game in both a desktop an
 * APA102-C LED light strip. The more the better, maximum of 1000. Tested with 2x 144/meter and 12x 60/meter strips. The FastLED lib works with the less expensive WS2812 LEDs, i've not tried them but should be fine.
 * 5v power supply, assume around 40mW per LED to calculate size
 * MPU6050 accelerometer
+* Spring doorstop, I used these: http://smile.amazon.com/gp/product/B00J4Y5BU2
 
 ## Enclosure
-Files to print your own enclosure can be found here: xxxxxxxx
+Files to print your own enclosure can be found here: http://www.thingiverse.com/thing:1116899
 
 ## Overview
 TWANG was developed quickly to make my Halloween lights interactive, the code is fairly well commmented but could be improved. The following is a quick overview of the code to help you understand and tweak the game to your needs.
