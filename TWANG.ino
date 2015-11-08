@@ -130,7 +130,7 @@ void loop() {
     }
     
     if (mm - previousMillis >= MIN_REDRAW_INTERVAL) {
-        getAccelerometerData();
+        getInput();
         long frameTimer = mm;
         previousMillis = mm;
         
@@ -658,7 +658,15 @@ void screenSaverTick(){
 // ---------------------------------
 // ----------- JOYSTICK ------------
 // ---------------------------------
-void getAccelerometerData(){
+void getInput(){
+    // This is responsible for the player movement speed and attacking. 
+    // You can replace it with anything you want that passes a -90>+90 value to joystickTilt
+    // and any value to joystickWobble that is greater than ATTACK_THRESHOLD (defined at start)
+    // For example you could use 3 momentery buttons:
+        // if(digitalRead(leftButtonPinNumber) == HIGH) joystickTilt = -90;
+        // if(digitalRead(rightButtonPinNumber) == HIGH) joystickTilt = 90;
+        // if(digitalRead(attackButtonPinNumber) == HIGH) joystickWobble = ATTACK_THRESHOLD;
+    
     accelgyro.getMotion6(&ax, &ay, &az, &gx, &gy, &gz);
     int a = (JOYSTICK_ORIENTATION == 0?ax:(JOYSTICK_ORIENTATION == 1?ay:az))/166;
     int g = (JOYSTICK_ORIENTATION == 0?gx:(JOYSTICK_ORIENTATION == 1?gy:gz));
