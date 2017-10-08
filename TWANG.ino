@@ -3,7 +3,6 @@
 #include "I2Cdev.h"
 #include "MPU6050.h"
 #include "Wire.h"
-#include "toneAC.h"
 #include "iSin.h"
 #include "RunningMedian.h"
 
@@ -21,14 +20,14 @@ int16_t ax, ay, az;
 int16_t gx, gy, gz;
 
 // LED setup
-#define NUM_LEDS             475
-#define DATA_PIN             3
-#define CLOCK_PIN            4
+#define NUM_LEDS             300
+#define DATA_PIN             43
+#define CLOCK_PIN            41
 #define LED_COLOR_ORDER      BGR//GBR
 #define BRIGHTNESS           150
-#define DIRECTION            1     // 0 = right to left, 1 = left to right
+#define DIRECTION            0     // 0 = right to left, 1 = left to right
 #define MIN_REDRAW_INTERVAL  16    // Min redraw interval (ms) 33 = 30fps / 16 = 63fps
-#define USE_GRAVITY          1     // 0/1 use gravity (LED strip going up wall)
+#define USE_GRAVITY          0     // 0/1 use gravity (LED strip going up wall)
 #define BEND_POINT           550   // 0/1000 point at which the LED strip goes up the wall
 
 // GAME
@@ -67,14 +66,22 @@ int lives = 3;
 
 // POOLS
 int lifeLEDs[3] = {52, 50, 40};
-Enemy enemyPool[10] = {
+int leftButtonPinNumber = 31;
+int rightButtonPinNumber = 33;
+int attackButtonPinNumber = 35;
+int const enemyCount = 10;
+Enemy enemyPool[enemyCount] = {
     Enemy(), Enemy(), Enemy(), Enemy(), Enemy(), Enemy(), Enemy(), Enemy(), Enemy(), Enemy()
 };
-int const enemyCount = 10;
-Particle particlePool[40] = {
-    Particle(), Particle(), Particle(), Particle(), Particle(), Particle(), Particle(), Particle(), Particle(), Particle(), Particle(), Particle(), Particle(), Particle(), Particle(), Particle(), Particle(), Particle(), Particle(), Particle(), Particle(), Particle(), Particle(), Particle(), Particle(), Particle(), Particle(), Particle(), Particle(), Particle(), Particle(), Particle(), Particle(), Particle(), Particle(), Particle(), Particle(), Particle(), Particle(), Particle()
-};
+
 int const particleCount = 40;
+Particle particlePool[particleCount] = {
+    Particle(), Particle(), Particle(), Particle(), Particle(), Particle(), Particle(), Particle(), Particle(), Particle(),
+    Particle(), Particle(), Particle(), Particle(), Particle(), Particle(), Particle(), Particle(), Particle(), Particle(), 
+    Particle(), Particle(), Particle(), Particle(), Particle(), Particle(), Particle(), Particle(), Particle(), Particle(), 
+    Particle(), Particle(), Particle(), Particle(), Particle(), Particle(), Particle(), Particle(), Particle(), Particle()
+};
+
 Spawner spawnPool[2] = {
     Spawner(), Spawner()
 };
@@ -118,17 +125,7 @@ void setup() {
 void loop() {
     long mm = millis();
     int brightness = 0;
-    
-    if(stage == "PLAY"){
-        if(attacking){
-            SFXattacking();
-        }else{
-            SFXtilt(joystickTilt);
-        }
-    }else if(stage == "DEAD"){
-        SFXdead();
-    }
-    
+        
     if (mm - previousMillis >= MIN_REDRAW_INTERVAL) {
         getInput();
         long frameTimer = mm;
@@ -202,14 +199,12 @@ void loop() {
                     brightness = 255;
                     leds[i] = CRGB(0, brightness, 0);
                 }
-                SFXwin();
             }else if(stageStartTime+1000 > mm){
                 int n = max(map(((mm-stageStartTime)), 500, 1000, NUM_LEDS, 0), 0);
                 for(int i = 0; i< n; i++){
                     brightness = 255;
                     leds[i] = CRGB(0, brightness, 0);
                 }
-                SFXwin();
             }else if(stageStartTime+1200 > mm){
                 leds[0] = CRGB(0, 255, 0);
             }else{
@@ -217,7 +212,6 @@ void loop() {
             }
         }else if(stage == "COMPLETE"){
             FastLED.clear();
-            SFXcomplete();
             if(stageStartTime+500 > mm){
                 int n = max(map(((mm-stageStartTime)), 0, 500, NUM_LEDS, 0), 0);
                 for(int i = NUM_LEDS; i>= n; i--){
@@ -244,10 +238,10 @@ void loop() {
             stageStartTime = 0;
         }
         
-        Serial.print(millis()-mm);
-        Serial.print(" - ");
+//        Serial.print(millis()-mm);
+//        Serial.print(" - ");
         FastLED.show();
-        Serial.println(millis()-mm);
+//        Serial.println(millis()-mm);
     }
 }
 
@@ -268,7 +262,7 @@ void loadLevel(){
             break;
         case 1:
             // Slow moving enemy
-            spawnEnemy(900, 0, 1, 0);
+            spawnEnemy(900, 0, 2, 0);
             break;
         case 2:
             // Spawning enemies at exit every 2 seconds
@@ -431,12 +425,10 @@ void tickEnemies(){
             if(attacking){
                 if(enemyPool[i]._pos > playerPosition-(ATTACK_WIDTH/2) && enemyPool[i]._pos < playerPosition+(ATTACK_WIDTH/2)){
                    enemyPool[i].Kill();
-                   SFXkill();
                 }
             }
             if(inLava(enemyPool[i]._pos)){
                 enemyPool[i].Kill();
-                SFXkill();
             }
             // Draw (if still alive)
             if(enemyPool[i].Alive()) {
@@ -663,9 +655,22 @@ void getInput(){
     // You can replace it with anything you want that passes a -90>+90 value to joystickTilt
     // and any value to joystickWobble that is greater than ATTACK_THRESHOLD (defined at start)
     // For example you could use 3 momentery buttons:
-        // if(digitalRead(leftButtonPinNumber) == HIGH) joystickTilt = -90;
-        // if(digitalRead(rightButtonPinNumber) == HIGH) joystickTilt = 90;
-        // if(digitalRead(attackButtonPinNumber) == HIGH) joystickWobble = ATTACK_THRESHOLD;
+//         int left = digitalRead(leftButtonPinNumber);
+//         int right = digitalRead(rightButtonPinNumber);
+//         int attack = digitalRead(attackButtonPinNumber);
+//         if(left != HIGH && right!= HIGH && attack != HIGH) {
+//          joystickTilt =0;
+//          joystickWobble = 0;
+//         }
+//         if(left == HIGH) {
+//          joystickTilt = -20;
+//         }
+//         if(right == HIGH) {
+//          joystickTilt = 20;
+//         }
+//         if(attack == HIGH) {
+//          joystickWobble = ATTACK_THRESHOLD + 5;
+//         }
     
     accelgyro.getMotion6(&ax, &ay, &az, &gx, &gy, &gz);
     int a = (JOYSTICK_ORIENTATION == 0?ax:(JOYSTICK_ORIENTATION == 1?ay:az))/166;
@@ -682,50 +687,3 @@ void getInput(){
     }
     joystickWobble = abs(MPUWobbleSamples.getHighest());
 }
-
-
-// ---------------------------------
-// -------------- SFX --------------
-// ---------------------------------
-void SFXtilt(int amount){ 
-    int f = map(abs(amount), 0, 90, 80, 900)+random8(100);
-    if(playerPositionModifier < 0) f -= 500;
-    if(playerPositionModifier > 0) f += 200;
-    toneAC(f, min(min(abs(amount)/9, 5), MAX_VOLUME));
-    
-}
-void SFXattacking(){
-    int freq = map(sin(millis()/2.0)*1000.0, -1000, 1000, 500, 600);
-    if(random8(5)== 0){
-      freq *= 3;
-    }
-    toneAC(freq, MAX_VOLUME);
-}
-void SFXdead(){
-    int freq = max(1000 - (millis()-killTime), 10);
-    freq += random8(200);
-    int vol = max(10 - (millis()-killTime)/200, 0);
-    toneAC(freq, MAX_VOLUME);
-}
-void SFXkill(){
-    toneAC(2000, MAX_VOLUME, 1000, true);
-}
-void SFXwin(){
-    int freq = (millis()-stageStartTime)/3.0;
-    freq += map(sin(millis()/20.0)*1000.0, -1000, 1000, 0, 20);
-    int vol = 10;//max(10 - (millis()-stageStartTime)/200, 0);
-    toneAC(freq, MAX_VOLUME);
-}
-
-void SFXcomplete(){
-    noToneAC();
-}
-
-
-
-
-
-
-
-
-
