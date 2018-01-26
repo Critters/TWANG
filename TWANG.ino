@@ -1,11 +1,21 @@
+
+// Configuration
+// Uncomment the INPUT_DEVICE you want to use:
+#define INPUT_DEVICE_MPU6050	1	// Use MPU6050 wobbler
+//#define INPUT_DEVICE_ANALOG	1	// Use Analog input on A2 and button on A1
+
 // Required libs
 #include "FastLED.h"
 #include "I2Cdev.h"
+
+#if defined(INPUT_DEVICE_MPU6050) && INPUT_DEVICE_MPU6050
 #include "MPU6050.h"
 #include "Wire.h"
+#include "RunningMedian.h"
+#endif /* INPUT_DEVICE_MPU6050 */
+
 #include "toneAC.h"
 #include "iSin.h"
-#include "RunningMedian.h"
 
 // Included libs
 #include "Enemy.h"
@@ -15,10 +25,13 @@
 #include "Boss.h"
 #include "Conveyor.h"
 
+
+#if defined(INPUT_DEVICE_MPU6050) && INPUT_DEVICE_MPU6050
 // MPU
 MPU6050 accelgyro;
 int16_t ax, ay, az;
 int16_t gx, gy, gz;
+#endif /* INPUT_DEVICE_MPU6050 */
 
 // LED setup
 #define NUM_LEDS             475
@@ -47,6 +60,9 @@ iSin isin = iSin();
 #define JOYSTICK_DEADZONE    5     // Angle to ignore
 int joystickTilt = 0;              // Stores the angle of the joystick
 int joystickWobble = 0;            // Stores the max amount of acceleration (wobble)
+// JOYSTICK (with INPUT_DEVICE_ANALOG only)
+#define JOYSTICK_ANALOG_PIN  A2    // Analog joystick / poti pin
+#define JOYSTICK_BUTTON_PIN  A1    // joystick button
 
 // WOBBLE ATTACK
 #define ATTACK_WIDTH        70     // Width of the wobble attack, world is 1000 wide
@@ -89,17 +105,28 @@ Conveyor conveyorPool[2] = {
 int const conveyorCount = 2;
 Boss boss = Boss();
 
-CRGB leds[NUM_LEDS];
+#if defined(INPUT_DEVICE_MPU6050) && INPUT_DEVICE_MPU6050
 RunningMedian MPUAngleSamples = RunningMedian(5);
 RunningMedian MPUWobbleSamples = RunningMedian(5);
+#endif /* INPUT_DEVICE_MPU6050 */
+
+CRGB leds[NUM_LEDS];
 
 void setup() {
     Serial.begin(9600);
     while (!Serial);
     
+#if defined(INPUT_DEVICE_MPU6050) && INPUT_DEVICE_MPU6050
     // MPU
     Wire.begin();
     accelgyro.initialize();
+#endif /* INPUT_DEVICE_MPU6050 */
+
+#if defined(INPUT_DEVICE_ANALOG) && INPUT_DEVICE_ANALOG
+    // Joystick analog
+    pinMode(JOYSTICK_BUTTON_PIN, INPUT_PULLUP);
+    pinMode(JOYSTICK_ANALOG_PIN, INPUT);
+#endif /* INPUT_DEVICE_ANALOG */
     
     // Fast LED
     FastLED.addLeds<APA102, DATA_PIN, CLOCK_PIN, LED_COLOR_ORDER>(leds, NUM_LEDS);
@@ -659,6 +686,7 @@ void screenSaverTick(){
 // ----------- JOYSTICK ------------
 // ---------------------------------
 void getInput(){
+#if defined(INPUT_DEVICE_MPU6050) && INPUT_DEVICE_MPU6050
     // This is responsible for the player movement speed and attacking. 
     // You can replace it with anything you want that passes a -90>+90 value to joystickTilt
     // and any value to joystickWobble that is greater than ATTACK_THRESHOLD (defined at start)
@@ -681,6 +709,20 @@ void getInput(){
         joystickTilt = 0-joystickTilt;
     }
     joystickWobble = abs(MPUWobbleSamples.getHighest());
+#endif /* INPUT_DEVICE_MPU6050 */
+#if defined(INPUT_DEVICE_ANALOG) && INPUT_DEVICE_ANALOG
+#if     defined(INPUT_DEVICE_MPU6050) && INPUT_DEVICE_MPU6050
+#       error "Please dont use INPUT_DEVICE_ANALOG INPUT_DEVICE_MPU6050 simultaneously!"
+#endif
+    int posx = digitalRead(JOYSTICK_ANALOG_PIN);
+    int button = analogRead(JOYSTICK_BUTTON_PIN);
+    Serial.print("pos:");
+    Serial.print(posx);
+    Serial.println(button ? "released" : "pressed");
+
+    joystickTilt = map(posx, 0, 1023, -90, 90);
+    joystickWobble = button ? 0 : ATTACK_THRESHOLD + 1;
+#endif /* INPUT_DEVICE_ANALOG */
 }
 
 
