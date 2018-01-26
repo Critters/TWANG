@@ -3,6 +3,7 @@
 // Uncomment the INPUT_DEVICE you want to use:
 #define INPUT_DEVICE_MPU6050	1	// Use MPU6050 wobbler
 //#define INPUT_DEVICE_ANALOG	1	// Use Analog input on A2 and button on A1
+//#define INPUT_DEVICE_WIICHUCK	1	// Use Wii Chuck controller
 
 // Uncomment to disable Audio:
 //#define DISABLE_TONEAC 1
@@ -17,6 +18,10 @@
 #include "Wire.h"
 #include "RunningMedian.h"
 #endif /* INPUT_DEVICE_MPU6050 */
+
+#if defined(INPUT_DEVICE_WIICHUCK) && INPUT_DEVICE_WIICHUCK
+#include <Wiichuck.h>
+#endif /* INPUT_DEVICE_WIICHUCK */
 
 #if !(defined(DISABLE_TONEAC) && DISABLE_TONEAC)
 #include "toneAC.h"
@@ -45,6 +50,10 @@ MPU6050 accelgyro;
 int16_t ax, ay, az;
 int16_t gx, gy, gz;
 #endif /* INPUT_DEVICE_MPU6050 */
+
+#if defined(INPUT_DEVICE_WIICHUCK) && INPUT_DEVICE_WIICHUCK
+Wiichuck wii;
+#endif /* INPUT_DEVICE_WIICHUCK */
 
 // LED setup
 #define NUM_LEDS             475
@@ -141,6 +150,11 @@ void setup() {
     pinMode(JOYSTICK_ANALOG_PIN, INPUT);
 #endif /* INPUT_DEVICE_ANALOG */
     
+#if defined(INPUT_DEVICE_WIICHUCK) && INPUT_DEVICE_WIICHUCK
+    wii.init();
+    wii.calibrate();
+#endif /* INPUT_DEVICE_WIICHUCK */
+
     // Fast LED
     FastLED.addLeds<APA102, DATA_PIN, CLOCK_PIN, LED_COLOR_ORDER>(leds, NUM_LEDS);
     //FastLED.addLeds<WS2812, DATA_PIN, LED_COLOR_ORDER>(leds, NUM_LEDS);
@@ -724,9 +738,10 @@ void getInput(){
     }
     joystickWobble = abs(MPUWobbleSamples.getHighest());
 #endif /* INPUT_DEVICE_MPU6050 */
+    
 #if defined(INPUT_DEVICE_ANALOG) && INPUT_DEVICE_ANALOG
 #if     defined(INPUT_DEVICE_MPU6050) && INPUT_DEVICE_MPU6050
-#       error "Please dont use INPUT_DEVICE_ANALOG INPUT_DEVICE_MPU6050 simultaneously!"
+#       error "Please dont use INPUT_DEVICE_ANALOG and INPUT_DEVICE_MPU6050 simultaneously!"
 #endif
     int posx = digitalRead(JOYSTICK_ANALOG_PIN);
     int button = analogRead(JOYSTICK_BUTTON_PIN);
@@ -737,6 +752,22 @@ void getInput(){
     joystickTilt = map(posx, 0, 1023, -90, 90);
     joystickWobble = button ? 0 : ATTACK_THRESHOLD + 1;
 #endif /* INPUT_DEVICE_ANALOG */
+
+#if defined(INPUT_DEVICE_WIICHUCK) && INPUT_DEVICE_WIICHUCK
+#if     defined(INPUT_DEVICE_MPU6050) && INPUT_DEVICE_MPU6050
+#       error "Please dont use INPUT_DEVICE_WIICHUCK and INPUT_DEVICE_MPU6050 simultaneously!"
+#endif
+    if (!wii.poll()) return;
+    const int restDelta = 5; // no movement with: pos == 128 +- restDelta
+    int posx = wii.joyY(); // Use wii.joyX() for left-right.
+    if (posx > (128 - restDelta)) posx -= 2 * restDelta;
+
+    //Serial.print(wii.joyX()); Serial.print(", "); Serial.print(wii.joyY()); Serial.print("  \t");
+    //Serial.print("button:"); Serial.print(wii.buttonC()); Serial.print(", "); Serial.println(wii.buttonZ());
+
+    joystickTilt = map(posx, 0, 255 - 2 * restDelta, -90, 90);
+    joystickWobble = wii.buttonZ() ? ATTACK_THRESHOLD + 1 : 0;
+#endif /* INPUT_DEVICE_WIICHUCK */
 }
 
 

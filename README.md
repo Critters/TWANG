@@ -31,7 +31,7 @@ The game is played on a 1000 unit line, the position of enemies, the player, lav
 
 The game also has 3 regular LEDs for life indicators (the player gets 3 lives which reset each time they level up). The pins for these LEDs are stored in lifeLEDs[] and are updated in the updateLives() function
 
-**//JOYSTICK SETUP** All parameters are commented in the code, you can set it to work in both forward/backward as well as side-to-side mode by changing JOYSTICK_ORIENTATION. Adjust the ATTACK_THRESHOLD if the "Twaning" is overly sensitive and the JOYSTICK_DEADZONE  if the player slowly drifts when there is no input (because it's hard to get the MPU6050 dead level). There are two input methods to choose from (mpu6050 and analog). Uncomment the INPUT_DEVICE_* line you want to use.
+**//JOYSTICK SETUP** All parameters are commented in the code, you can set it to work in both forward/backward as well as side-to-side mode by changing JOYSTICK_ORIENTATION. Adjust the ATTACK_THRESHOLD if the "Twaning" is overly sensitive and the JOYSTICK_DEADZONE  if the player slowly drifts when there is no input (because it's hard to get the MPU6050 dead level). There are three input methods to choose from: the original mpu6050, analog joystick or Wiichuck. There are #defines prepared in the code to choose the input device. Uncomment the INPUT_DEVICE_* line you want to use.
 
 **//WOBBLE ATTACK** Sets the width, duration (ms) of the attack
 
