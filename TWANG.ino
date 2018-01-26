@@ -4,6 +4,10 @@
 #define INPUT_DEVICE_MPU6050	1	// Use MPU6050 wobbler
 //#define INPUT_DEVICE_ANALOG	1	// Use Analog input on A2 and button on A1
 
+// Uncomment to disable Audio:
+//#define DISABLE_TONEAC 1
+
+
 // Required libs
 #include "FastLED.h"
 #include "I2Cdev.h"
@@ -14,7 +18,10 @@
 #include "RunningMedian.h"
 #endif /* INPUT_DEVICE_MPU6050 */
 
+#if !(defined(DISABLE_TONEAC) && DISABLE_TONEAC)
 #include "toneAC.h"
+#endif
+
 #include "iSin.h"
 
 // Included libs
@@ -25,6 +32,12 @@
 #include "Boss.h"
 #include "Conveyor.h"
 
+
+#if (defined(DISABLE_TONEAC) && DISABLE_TONEAC)
+// dummys for toneAC
+#define toneAC(freq, vol,...)
+#define noToneAC()
+#endif
 
 #if defined(INPUT_DEVICE_MPU6050) && INPUT_DEVICE_MPU6050
 // MPU
