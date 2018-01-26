@@ -130,6 +130,7 @@ void setup() {
     
     // Fast LED
     FastLED.addLeds<APA102, DATA_PIN, CLOCK_PIN, LED_COLOR_ORDER>(leds, NUM_LEDS);
+    //FastLED.addLeds<WS2812, DATA_PIN, LED_COLOR_ORDER>(leds, NUM_LEDS);
     FastLED.setBrightness(BRIGHTNESS);
     FastLED.setDither(1);
     
