@@ -1,5 +1,5 @@
 # TWANG
-A Arduino-based, 1D, LED loving, dungeon crawler. inspired by Line Wobbler by Robin B
+A Arduino-based, 1D, LED loving, dungeon crawler. Inspired by Line Wobbler by Robin B.
 
 ## Video playlist
 A playlist that shows the development of TWANG and the game in both a desktop and house-sized form can be found here: https://www.youtube.com/watch?v=9yf_VINmbTE&list=PL1_Z89_x_Dff-XhOxlx6sQ38wJqe1X2M0
@@ -23,9 +23,9 @@ A playlist that shows the development of TWANG and the game in both a desktop an
 Files to print your own enclosure can be found here: http://www.thingiverse.com/thing:1116899
 
 ## Overview
-TWANG was developed quickly to make my Halloween lights interactive, the code is fairly well commmented but could be improved. The following is a quick overview of the code to help you understand and tweak the game to your needs.
+TWANG was developed quickly to make my Halloween lights interactive, the code is fairly well commented but could be improved. The following is a quick overview of the code to help you understand and tweak the game to your needs.
 
-The game is played on a 1000 unit line, the position of enemies, the player, lava etc range from 0 to 1000 and the LEDs that represent them are derived using the getLED() function. You don't need to worry about this but it's good to know for things like the width of the attack and player max move speed. Regardles of the number of LEDs, everything takes place in this 1000 unit wide line.
+The game is played on a 1000 unit line, the position of enemies, the player, lava etc range from 0 to 1000 and the LEDs that represent them are derived using the getLED() function. You don't need to worry about this but it's good to know for things like the width of the attack and player max move speed. Regardless of the number of LEDs, everything takes place in this 1000 unit wide line.
 
 **//LED SETUP** Defines the quantity of LEDs as well as the data and clock pins used. I've tested several APA102-C strips and the color order sometimes changes from BGR to GBR, if the player is not blue, the exit green and the enemies red, this is the bit you want to change. Brightness should range from 50 to 255, use a lower number if playing at night or wanting to use a smaller power supply. "DIRECTION" can be set to 0 or 1 to flip the game orientation. In setup() there is a "FastLED.addLeds()" line, in there you could change it to another brand of LED strip like the cheaper WS2812.
 
@@ -35,12 +35,12 @@ The game also has 3 regular LEDs for life indicators (the player gets 3 lives wh
 
 **//WOBBLE ATTACK** Sets the width, duration (ms) of the attack
 
-**//POOLS** These are the object pools for enemies, particles, lava, conveyors etc. You can modify the quanity of any of them if your levels use more or if you want to save some memory, just remember to update the respective counts to avoid errors.
+**//POOLS** These are the object pools for enemies, particles, lava, conveyors etc. You can modify the quantity of any of them if your levels use more or if you want to save some memory, just remember to update the respective counts to avoid errors.
 
 **//USE_GRAVITY** 0/1 to set if particles created by the player getting killed should fall towards the start point, the BEND_POINT variable can be set to mark the point at which the strip of LEDs goes from been horizontal to vertical. The game is 1000 units wide (regardless of number of LED's) so 500 would be the mid point. If this is confusing just set USE_GRAVITY to 0
 
 ## Modifying / Creating levels
-Find the loadLevel() function, in there you can see a switch statment with the 10 levels I created. They all call different functions and variables to setup the level. Each one is described below:
+Find the loadLevel() function, in there you can see a switch statement with the 10 levels I created. They all call different functions and variables to set up the level. Each one is described below:
 
 **playerPosition;** Where the player starts on the 0 to 1000 line. If not set it defaults to 0. I set it to 200 in the first level so the player can see movement even if the first action they take is to push the joystick left
 
@@ -54,7 +54,7 @@ Find the loadLevel() function, in there you can see a switch statment with the 1
 * A spawn pool is a point which spawns enemies forever
 * position: 0 to 1000
 * rate: milliseconds between spawns, 1000 = 1 second
-* speed: speed of the enemis it spawns
+* speed: speed of the enemies it spawns
 * direction: 0=towards start, 1=away from start
 
 **spawnLava(startPoint, endPoint, ontime, offtime, offset);**
@@ -68,6 +68,6 @@ Find the loadLevel() function, in there you can see a switch statment with the 1
 * direction: the direction of travel 0/1
 
 **spawnBoss()**
-* T7693here are no parramaters for a boss, they always spawn in the same place and have 3 lives. Tweak the values of Boss.h to modify
+* There are no parameters for a boss, they always spawn in the same place and have 3 lives. Tweak the values of Boss.h to modify
 
 Feel free to edit, comment on the YouTube video (link at top) if you have any questions.
