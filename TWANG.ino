@@ -24,7 +24,7 @@ int16_t gx, gy, gz;
 #define NUM_LEDS             475
 #define DATA_PIN             3
 #define CLOCK_PIN            4
-#define LED_COLOR_ORDER      BGR//GBR
+#define LED_COLOR_ORDER      BGR   //if colours aren't working, try GRB or GBR
 #define BRIGHTNESS           150
 #define DIRECTION            1     // 0 = right to left, 1 = left to right
 #define MIN_REDRAW_INTERVAL  16    // Min redraw interval (ms) 33 = 30fps / 16 = 63fps
