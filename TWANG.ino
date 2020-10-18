@@ -23,14 +23,14 @@ int16_t gx, gy, gz;
 // LED setup
 #define NUM_LEDS             475
 #define DATA_PIN             3
-#define CLOCK_PIN            4
+#define CLOCK_PIN            4     
 #define LED_COLOR_ORDER      BGR   //if colours aren't working, try GRB or GBR
 #define BRIGHTNESS           150   //Use a lower value for lower current power supplies(<2 amps)
 #define DIRECTION            1     // 0 = right to left, 1 = left to right
 #define MIN_REDRAW_INTERVAL  16    // Min redraw interval (ms) 33 = 30fps / 16 = 63fps
 #define USE_GRAVITY          1     // 0/1 use gravity (LED strip going up wall)
 #define BEND_POINT           550   // 0/1000 point at which the LED strip goes up the wall
-#define LED_TYPE             APA102//type of LED strip to use(APA102 - DotStar, WS2811 - NeoPixel)
+#define LED_TYPE             APA102//type of LED strip to use(APA102 - DotStar, WS2811 - NeoPixel) For Neopixels, uncomment line #108 and comment out line #106
 
 // GAME
 long previousMillis = 0;           // Time of the last redraw
@@ -104,6 +104,8 @@ void setup() {
     
     // Fast LED
     FastLED.addLeds<LED_TYPE, DATA_PIN, CLOCK_PIN, LED_COLOR_ORDER>(leds, NUM_LEDS);
+    //If using Neopixels, use
+    //FastLED.addLeds<LED_TYPE, DATA_PIN, LED_COLOR_ORDER>(leds, NUM_LEDS);
     FastLED.setBrightness(BRIGHTNESS);
     FastLED.setDither(1);
     
