@@ -25,7 +25,7 @@ int16_t gx, gy, gz;
 #define DATA_PIN             3
 #define CLOCK_PIN            4
 #define LED_COLOR_ORDER      BGR   //if colours aren't working, try GRB or GBR
-#define BRIGHTNESS           150
+#define BRIGHTNESS           150   //Use a lower value for lower current power supplies(<2 amps)
 #define DIRECTION            1     // 0 = right to left, 1 = left to right
 #define MIN_REDRAW_INTERVAL  16    // Min redraw interval (ms) 33 = 30fps / 16 = 63fps
 #define USE_GRAVITY          1     // 0/1 use gravity (LED strip going up wall)
