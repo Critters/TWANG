@@ -30,6 +30,7 @@ int16_t gx, gy, gz;
 #define MIN_REDRAW_INTERVAL  16    // Min redraw interval (ms) 33 = 30fps / 16 = 63fps
 #define USE_GRAVITY          1     // 0/1 use gravity (LED strip going up wall)
 #define BEND_POINT           550   // 0/1000 point at which the LED strip goes up the wall
+#define LED_TYPE             APA102//type of LED strip to use(APA102 - DotStar, WS2811 - NeoPixel)
 
 // GAME
 long previousMillis = 0;           // Time of the last redraw
@@ -102,7 +103,7 @@ void setup() {
     accelgyro.initialize();
     
     // Fast LED
-    FastLED.addLeds<APA102, DATA_PIN, CLOCK_PIN, LED_COLOR_ORDER>(leds, NUM_LEDS);
+    FastLED.addLeds<LED_TYPE, DATA_PIN, CLOCK_PIN, LED_COLOR_ORDER>(leds, NUM_LEDS);
     FastLED.setBrightness(BRIGHTNESS);
     FastLED.setDither(1);
     
