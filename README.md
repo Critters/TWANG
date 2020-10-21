@@ -14,11 +14,10 @@ A playlist that shows the development of TWANG and the game in both a desktop an
 * FastLED: http://fastled.io/
 * I2Cdev
 * MPU6050: https://github.com/jrowberg/i2cdevlib/tree/master/Arduino/MPU6050
-* ToneAC: http://forum.arduino.cc/index.php?topic=142097.0
 * RunningMedian: http://playground.arduino.cc/Main/RunningMedian
 
 ## Hardware used:
-* Arduino MEGA
+* Arduino MEGA/NANO
 * 3 LEDs for life indicator
 * APA102-C LED light strip. The more the better, maximum of 1000. Tested with 2x 144/meter and 12x 60/meter strips. The FastLED lib works with the less expensive WS2812 LEDs, i've not tried them but should be fine.
 * 5v power supply, assume around 40mW per LED to calculate size
