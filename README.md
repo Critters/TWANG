@@ -1,6 +1,12 @@
 # TWANG
 A Arduino-based, 1D, LED loving, dungeon crawler. inspired by Line Wobbler by Robin B
 
+## ATMEGA4809
+This branch is intended for use with the Arduino Nano Every and the Uno Wifi REV2 both of which use the Atmega 4809.
+At the time of writing, these boards do not have out of the box support for FastLED or ToneAC.
+This branch removes the ToneAC functionality.
+For FastLED to function, install [this](https://github.com/FastLED/FastLED/files/4608545/FastLED.zip) library instead of the one listed in Arduino IDE.
+
 ## Video playlist
 A playlist that shows the development of TWANG and the game in both a desktop and house-sized form can be found here: https://www.youtube.com/watch?v=9yf_VINmbTE&list=PL1_Z89_x_Dff-XhOxlx6sQ38wJqe1X2M0
 
