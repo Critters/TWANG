@@ -11,7 +11,7 @@ For FastLED to function, install [this](https://github.com/FastLED/FastLED/files
 A playlist that shows the development of TWANG and the game in both a desktop and house-sized form can be found here: https://www.youtube.com/watch?v=9yf_VINmbTE&list=PL1_Z89_x_Dff-XhOxlx6sQ38wJqe1X2M0
 
 ## Required libraries:
-* FastLED: http://fastled.io/
+* FastLED: https://github.com/FastLED/FastLED/files/4608545/FastLED.zip
 * I2Cdev
 * MPU6050: https://github.com/jrowberg/i2cdevlib/tree/master/Arduino/MPU6050
 * RunningMedian: http://playground.arduino.cc/Main/RunningMedian
