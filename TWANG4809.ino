@@ -3,7 +3,7 @@
 #include "I2Cdev.h"
 #include "MPU6050.h"
 #include "Wire.h"
-#include "toneAC.h"
+//#include "toneAC.h"
 #include "iSin.h"
 #include "RunningMedian.h"
 
@@ -23,14 +23,14 @@ int16_t gx, gy, gz;
 // LED setup
 #define NUM_LEDS             475
 #define DATA_PIN             3
-#define CLOCK_PIN            4     
-#define LED_COLOR_ORDER      BGR   //if colours aren't working, try GRB or GBR
-#define BRIGHTNESS           150   //Use a lower value for lower current power supplies(<2 amps)
+#define CLOCK_PIN            4
+#define LED_COLOR_ORDER      GRB//Try BGR or GBR
+#define BRIGHTNESS           150
 #define DIRECTION            1     // 0 = right to left, 1 = left to right
 #define MIN_REDRAW_INTERVAL  16    // Min redraw interval (ms) 33 = 30fps / 16 = 63fps
 #define USE_GRAVITY          1     // 0/1 use gravity (LED strip going up wall)
-#define BEND_POINT           550   // 0/1000 point at which the LED strip goes up the wall
-#define LED_TYPE             APA102//type of LED strip to use(APA102 - DotStar, WS2811 - NeoPixel) For Neopixels, uncomment line #108 and comment out line #106
+#define BEND_POINT           0   // 0/1000 point at which the LED strip goes up the wall
+#define LED_TYPE             APA102//type of LED strip to use(APA102 - DotStar, WS2811 - NeoPixel)
 
 // GAME
 long previousMillis = 0;           // Time of the last redraw
@@ -98,14 +98,17 @@ void setup() {
     Serial.begin(9600);
     while (!Serial);
     
+    //Buttons
+    //pinMode(LEFT_PIN, INPUT);
+    //pinMode(RIGHT_PIN, INPUT);
+    //pinMode(ATTACK_PIN, INPUT);
+    
     // MPU
     Wire.begin();
     accelgyro.initialize();
     
     // Fast LED
     FastLED.addLeds<LED_TYPE, DATA_PIN, CLOCK_PIN, LED_COLOR_ORDER>(leds, NUM_LEDS);
-    //If using Neopixels, use
-    //FastLED.addLeds<LED_TYPE, DATA_PIN, LED_COLOR_ORDER>(leds, NUM_LEDS);
     FastLED.setBrightness(BRIGHTNESS);
     FastLED.setDither(1);
     
@@ -121,7 +124,7 @@ void setup() {
 void loop() {
     long mm = millis();
     int brightness = 0;
-    
+    /*
     if(stage == "PLAY"){
         if(attacking){
             SFXattacking();
@@ -131,7 +134,7 @@ void loop() {
     }else if(stage == "DEAD"){
         SFXdead();
     }
-    
+    */
     if (mm - previousMillis >= MIN_REDRAW_INTERVAL) {
         getInput();
         long frameTimer = mm;
@@ -205,14 +208,14 @@ void loop() {
                     brightness = 255;
                     leds[i] = CRGB(0, brightness, 0);
                 }
-                SFXwin();
+                //SFXwin();
             }else if(stageStartTime+1000 > mm){
                 int n = max(map(((mm-stageStartTime)), 500, 1000, NUM_LEDS, 0), 0);
                 for(int i = 0; i< n; i++){
                     brightness = 255;
                     leds[i] = CRGB(0, brightness, 0);
                 }
-                SFXwin();
+                //SFXwin();
             }else if(stageStartTime+1200 > mm){
                 leds[0] = CRGB(0, 255, 0);
             }else{
@@ -220,7 +223,7 @@ void loop() {
             }
         }else if(stage == "COMPLETE"){
             FastLED.clear();
-            SFXcomplete();
+            //SFXcomplete();
             if(stageStartTime+500 > mm){
                 int n = max(map(((mm-stageStartTime)), 0, 500, NUM_LEDS, 0), 0);
                 for(int i = NUM_LEDS; i>= n; i--){
@@ -434,12 +437,12 @@ void tickEnemies(){
             if(attacking){
                 if(enemyPool[i]._pos > playerPosition-(ATTACK_WIDTH/2) && enemyPool[i]._pos < playerPosition+(ATTACK_WIDTH/2)){
                    enemyPool[i].Kill();
-                   SFXkill();
+                   //SFXkill();
                 }
             }
             if(inLava(enemyPool[i]._pos)){
                 enemyPool[i].Kill();
-                SFXkill();
+                //SFXkill();
             }
             // Draw (if still alive)
             if(enemyPool[i].Alive()) {
@@ -666,9 +669,9 @@ void getInput(){
     // You can replace it with anything you want that passes a -90>+90 value to joystickTilt
     // and any value to joystickWobble that is greater than ATTACK_THRESHOLD (defined at start)
     // For example you could use 3 momentery buttons:
-        // if(digitalRead(leftButtonPinNumber) == HIGH) joystickTilt = -90;
-        // if(digitalRead(rightButtonPinNumber) == HIGH) joystickTilt = 90;
-        // if(digitalRead(attackButtonPinNumber) == HIGH) joystickWobble = ATTACK_THRESHOLD;
+    // if(digitalRead(leftButtonPinNumber) == HIGH) joystickTilt = -90;
+    // if(digitalRead(rightButtonPinNumber) == HIGH) joystickTilt = 90;
+    // if(digitalRead(attackButtonPinNumber) == HIGH) joystickWobble = ATTACK_THRESHOLD;
     
     accelgyro.getMotion6(&ax, &ay, &az, &gx, &gy, &gz);
     int a = (JOYSTICK_ORIENTATION == 0?ax:(JOYSTICK_ORIENTATION == 1?ay:az))/166;
@@ -690,7 +693,7 @@ void getInput(){
 // ---------------------------------
 // -------------- SFX --------------
 // ---------------------------------
-void SFXtilt(int amount){ 
+/*void SFXtilt(int amount){ 
     int f = map(abs(amount), 0, 90, 80, 900)+random8(100);
     if(playerPositionModifier < 0) f -= 500;
     if(playerPositionModifier > 0) f += 200;
@@ -723,12 +726,4 @@ void SFXwin(){
 void SFXcomplete(){
     noToneAC();
 }
-
-
-
-
-
-
-
-
-
+*/
