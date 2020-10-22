@@ -26,7 +26,7 @@ TWANG was developed quickly to make my Halloween lights interactive, the code is
 
 The game is played on a 1000 unit line, the position of enemies, the player, lava etc range from 0 to 1000 and the LEDs that represent them are derived using the getLED() function. You don't need to worry about this but it's good to know for things like the width of the attack and player max move speed. Regardles of the number of LEDs, everything takes place in this 1000 unit wide line.
 
-## ATMEGA4809
+**ATMEGA4809**
 The TWANG4809 sketch is intended for use with the Arduino Nano Every and the Uno Wifi REV2 both of which use the Atmega 4809 processor.
 At the time of writing, these boards do not have out of the box support for FastLED or ToneAC.
 This sketch removes the ToneAC functionality.
