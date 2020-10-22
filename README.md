@@ -1,12 +1,6 @@
 # TWANG
 A Arduino-based, 1D, LED loving, dungeon crawler. inspired by Line Wobbler by Robin B
 
-## ATMEGA4809
-This branch is intended for use with the Arduino Nano Every and the Uno Wifi REV2 both of which use the Atmega 4809.
-At the time of writing, these boards do not have out of the box support for FastLED or ToneAC.
-This branch removes the ToneAC functionality.
-For FastLED to function, install [this](https://github.com/FastLED/FastLED/files/4608545/FastLED.zip) library instead of the one listed in Arduino IDE.
-
 ## Video playlist
 A playlist that shows the development of TWANG and the game in both a desktop and house-sized form can be found here: https://www.youtube.com/watch?v=9yf_VINmbTE&list=PL1_Z89_x_Dff-XhOxlx6sQ38wJqe1X2M0
 
@@ -31,6 +25,12 @@ Files to print your own enclosure can be found here: http://www.thingiverse.com/
 TWANG was developed quickly to make my Halloween lights interactive, the code is fairly well commmented but could be improved. The following is a quick overview of the code to help you understand and tweak the game to your needs.
 
 The game is played on a 1000 unit line, the position of enemies, the player, lava etc range from 0 to 1000 and the LEDs that represent them are derived using the getLED() function. You don't need to worry about this but it's good to know for things like the width of the attack and player max move speed. Regardles of the number of LEDs, everything takes place in this 1000 unit wide line.
+
+## ATMEGA4809
+The TWANG4809 sketch is intended for use with the Arduino Nano Every and the Uno Wifi REV2 both of which use the Atmega 4809 processor.
+At the time of writing, these boards do not have out of the box support for FastLED or ToneAC.
+This sketch removes the ToneAC functionality.
+For FastLED to function, install [this](https://github.com/FastLED/FastLED/files/4608545/FastLED.zip) library instead of the one listed in Arduino IDE.
 
 **//LED SETUP** Defines the quantity of LEDs as well as the data and clock pins used. I've tested several APA102-C strips and the color order sometimes changes from BGR to GBR or GRB, if the player is not blue, the exit green and the enemies red, this is the bit you want to change. Brightness should range from 50 to 255, use a lower number if playing at night or wanting to use a smaller power supply. "DIRECTION" can be set to 0 or 1 to flip the game orientation. In setup() there is a "FastLED.addLeds()" line, in there you could change it to another brand of LED strip like the cheaper WS2812.
 
