@@ -9,6 +9,7 @@ A playlist that shows the development of TWANG and the game in both a desktop an
 * I2Cdev
 * MPU6050: https://github.com/jrowberg/i2cdevlib/tree/master/Arduino/MPU6050
 * RunningMedian: http://playground.arduino.cc/Main/RunningMedian
+* toneAC
 
 ## Hardware used:
 * Arduino MEGA/NANO
