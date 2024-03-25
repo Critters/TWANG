@@ -1,3 +1,6 @@
+#ifndef TWANG_PARTICLE_H
+#define TWANG_PARTICLE_H
+
 #include "Arduino.h"
 #define FRICTION 1
 
@@ -57,3 +60,5 @@ bool Particle::Alive(){
 void Particle::Kill(){
     _alive = 0;
 }
+
+#endif
