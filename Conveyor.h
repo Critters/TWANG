@@ -1,3 +1,6 @@
+#ifndef TWANG_CONVEYOR_H
+#define TWANG_CONVEYOR_H
+
 #include "Arduino.h"
 
 class Conveyor
@@ -21,3 +24,5 @@ void Conveyor::Spawn(int startPoint, int endPoint, int dir){
 void Conveyor::Kill(){
     _alive = false;
 }
+
+#endif

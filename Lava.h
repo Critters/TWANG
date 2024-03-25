@@ -1,3 +1,6 @@
+#ifndef TWANG_LAVA_H
+#define TWANG_LAVA_H
+
 #include "Arduino.h"
 
 class Lava
@@ -35,3 +38,5 @@ void Lava::Kill(){
 int Lava::Alive(){
     return _alive;
 }
+
+#endif

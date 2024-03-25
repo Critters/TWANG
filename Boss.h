@@ -1,3 +1,6 @@
+#ifndef TWANG_BOSS_H
+#define TWANG_BOSS_H
+
 #include "Arduino.h"
 
 class Boss
@@ -40,3 +43,5 @@ bool Boss::Alive(){
 void Boss::Kill(){
     _alive = 0;
 }
+
+#endif

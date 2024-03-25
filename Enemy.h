@@ -1,3 +1,6 @@
+#ifndef TWANG_ENEMY_H
+#define TWANG_ENEMY_H
+
 #include "Arduino.h"
 
 class Enemy
@@ -53,3 +56,5 @@ bool Enemy::Alive(){
 void Enemy::Kill(){
     _alive = 0;
 }
+
+#endif

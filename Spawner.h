@@ -1,3 +1,6 @@
+#ifndef TWANG_SPAWNER_H
+#define TWANG_SPAWNER_H
+
 #include "Arduino.h"
 
 class Spawner
@@ -33,3 +36,5 @@ void Spawner::Kill(){
 int Spawner::Alive(){
     return _alive;
 }
+
+#endif
